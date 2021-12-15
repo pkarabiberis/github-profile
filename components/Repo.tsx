@@ -1,53 +1,96 @@
 import React from 'react';
 import styled from 'styled-components';
-import { RepoIcon } from '@primer/octicons-react';
+import { RepoIcon, RepoForkedIcon, StarIcon } from '@primer/octicons-react';
+import theme from '../styles/theme';
+import { RepoData } from '../mock';
 
 interface RepoProps {
-  name: string;
-  desc: string;
-  forks: number;
-  stars: number;
-  size: number;
-  language: string;
+  repo: RepoData;
 }
 
 const Container = styled.li`
   box-shadow: 0 2px 2px 0 black;
   border-radius: 0.25em;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   padding: 2rem;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: ${theme.colors.white};
 
   .repo-head {
     display: flex;
     flex-direction: row;
     align-items: center;
 
+    h3 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    svg {
+      margin-right: 10px;
+    }
+  }
+
+  p {
+    color: ${theme.colors.grey};
+  }
+
+  .repo-footer {
+    display: flex;
+    align-items: center;
+    color: ${theme.colors.grey};
+  }
+
+  .repo-stat {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    font-size: 13px;
+
+    &:last-child {
+      margin-left: auto;
+    }
     svg {
       margin-right: 2px;
     }
   }
 `;
 
-export const Repo: React.FC<RepoProps> = ({
-  name,
-  desc,
-  forks,
-  stars,
-  size,
-  language,
-}) => {
+export const Repo: React.FC<RepoProps> = ({ repo }) => {
   return (
-    <Container>
-      <div className="repo-head">
-        <RepoIcon />
-        <span>{name}</span>
-      </div>
-      <p>{desc}</p>
-      <div className="repo-footer">
-        <span>{language}</span>
-      </div>
-    </Container>
+    <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+      <Container>
+        <div className="repo-head">
+          <RepoIcon />
+          <h3>{repo.name}</h3>
+        </div>
+        <p>{repo.description}</p>
+        <div className="repo-footer">
+          <div className="repo-stat">
+            <span>{repo.language}</span>
+          </div>
+
+          <div className="repo-stat">
+            <RepoForkedIcon />
+            <span>{repo.forks}</span>
+          </div>
+
+          <div className="repo-stat">
+            <StarIcon />
+            <span>{repo.stargazers_count}</span>
+          </div>
+
+          <div className="repo-stat">
+            <span>{repo.size.toLocaleString()}KB</span>
+          </div>
+        </div>
+      </Container>
+    </a>
   );
 };

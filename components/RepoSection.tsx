@@ -10,9 +10,12 @@ interface RepoSectionProps {
   repos: RepoData[];
 }
 
+type sortTypes = 'stargazers_count' | 'forks_count' | 'size';
+
 const Container = styled.section`
   display: flex;
   margin: 25px 0;
+  justify-content: space-between;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -27,6 +30,9 @@ const RepoList = styled.ul`
 export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
   const [chartData, setChartData] = useState<null | ChartConfig>(null);
   const [isMobile, setIsMobile] = useState<null | boolean>(null);
+  const [sortType, setSortType] = useState<sortTypes>('stargazers_count');
+  const [sortedRepos, setSortedRepos] = useState<RepoData[]>([]);
+
   const getLanguages = () => {
     const languageMap: Record<string, number> = {};
 
@@ -82,6 +88,22 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
     setChartData(config);
   };
 
+  const sortMap: Record<string, string> = {
+    stars: 'stargazers_count',
+    forks: 'forks_count',
+    size: 'size',
+  };
+
+  const handleSortChange = (value: string) => {
+    const type = sortMap[value] as sortTypes;
+    setSortType(type);
+  };
+
+  const sortRepos = () => {
+    const sorted = [...repos].sort((a, b) => b[sortType] - a[sortType]);
+    setSortedRepos(sorted);
+  };
+
   useEffect(() => {
     buildLanguageChart();
     const updateWidth = () => {
@@ -96,27 +118,20 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
     };
   }, []);
 
+  useEffect(() => {
+    sortRepos();
+  }, [sortType]);
+
   return (
     <>
-      {!isMobile && <DropDown />}
-
+      {!isMobile && <DropDown sortRepos={handleSortChange} />}
       <Container>
         {chartData && <LangChart chartData={chartData} />}
+        {isMobile && <DropDown sortRepos={handleSortChange} />}
 
-        {isMobile && <DropDown />}
         <RepoList>
-          {repos &&
-            repos.map((repo) => (
-              <Repo
-                key={repo.id}
-                name={repo.name}
-                desc={repo.description || ''}
-                forks={repo.forks_count}
-                language={repo.language || ''}
-                size={repo.size}
-                stars={repo.stargazers_count}
-              />
-            ))}
+          {sortedRepos &&
+            sortedRepos.map((repo) => <Repo key={repo.id} repo={repo} />)}
         </RepoList>
       </Container>
     </>
