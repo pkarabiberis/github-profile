@@ -13,6 +13,12 @@ const Container = styled.section`
   flex-direction: column;
   align-items: center;
 
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+  }
+
   .avatar {
     margin-bottom: 1.5rem;
     border-radius: 100%;
