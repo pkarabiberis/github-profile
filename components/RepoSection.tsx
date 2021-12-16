@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RepoData } from '../mock';
+import theme from '../styles/theme';
 import { ChartConfig } from '../types';
+import { languageColors } from '../utils';
 import { DropDown } from './DropDown';
 import { LangChart } from './LangChart';
 import { Repo } from './Repo';
@@ -25,13 +27,37 @@ const Container = styled.section`
 const RepoList = styled.ul`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  padding-left: 10px;
+  max-width: 50%;
+
+  .load-more {
+    margin: 25px auto;
+    text-align: center;
+    font-size: 13px;
+    color: ${theme.colors.grey};
+
+    button {
+      background-color: transparent;
+      color: ${theme.colors.grey};
+
+      &:hover {
+        color: ${theme.colors.blue};
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    min-width: 100%;
+  }
 `;
 
 export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
   const [chartData, setChartData] = useState<null | ChartConfig>(null);
-  const [isMobile, setIsMobile] = useState<null | boolean>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
   const [sortType, setSortType] = useState<sortTypes>('stargazers_count');
   const [sortedRepos, setSortedRepos] = useState<RepoData[]>([]);
+  const [cursorIndex, setCursorIndex] = useState(4);
 
   const getLanguages = () => {
     const languageMap: Record<string, number> = {};
@@ -53,10 +79,13 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
     const languages = getLanguages();
     const labels: string[] = [];
     const labelValues: number[] = [];
+    const backgroundColor: string[] = [];
 
-    Object.keys(getLanguages()).forEach((lang) => {
+    Object.keys(languages).forEach((lang) => {
       labels.push(lang);
       labelValues.push(languages[lang]);
+      const langToType = lang as keyof typeof languageColors;
+      backgroundColor.push(languageColors[langToType].color || '');
     });
 
     const config = {
@@ -64,22 +93,8 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
       datasets: [
         {
           data: labelValues,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-          ],
+          backgroundColor,
+          borderColor: backgroundColor,
           borderWidth: 1,
         },
       ],
@@ -100,27 +115,32 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
   };
 
   const sortRepos = () => {
-    const sorted = [...repos].sort((a, b) => b[sortType] - a[sortType]);
+    const sorted = [...repos]
+      .filter((repo) => !repo.fork)
+      .sort((a, b) => b[sortType] - a[sortType])
+      .slice(0, cursorIndex);
+
     setSortedRepos(sorted);
+  };
+
+  const handleLoadMore = () => {
+    setCursorIndex((prev) => prev + 4);
   };
 
   useEffect(() => {
     buildLanguageChart();
-    const updateWidth = () => {
-      const ismobile = window.innerWidth < 768;
-      if (ismobile !== isMobile) setIsMobile(ismobile);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener('resize', updateWidth);
+    window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('resize', updateWidth);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
     sortRepos();
-  }, [sortType]);
+  }, [sortType, cursorIndex]);
 
   return (
     <>
@@ -132,6 +152,13 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
         <RepoList>
           {sortedRepos &&
             sortedRepos.map((repo) => <Repo key={repo.id} repo={repo} />)}
+          <div className="load-more">
+            {repos[cursorIndex + 1] ? (
+              <button onClick={handleLoadMore}>Show more</button>
+            ) : (
+              <span>You've reached the end!</span>
+            )}
+          </div>
         </RepoList>
       </Container>
     </>

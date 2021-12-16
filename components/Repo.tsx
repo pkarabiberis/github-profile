@@ -3,18 +3,24 @@ import styled from 'styled-components';
 import { RepoIcon, RepoForkedIcon, StarIcon } from '@primer/octicons-react';
 import theme from '../styles/theme';
 import { RepoData } from '../mock';
+import { languageColors } from '../utils';
 
 interface RepoProps {
   repo: RepoData;
 }
 
-const Container = styled.li`
-  box-shadow: 0 2px 2px 0 black;
+interface LangColor {
+  color: string;
+}
+
+const Container = styled.li<LangColor>`
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
   border-radius: 0.25em;
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-size: 14px;
   color: ${theme.colors.white};
 
@@ -45,16 +51,33 @@ const Container = styled.li`
     display: flex;
     align-items: center;
     color: ${theme.colors.grey};
+
+    @media (max-width: 400px) {
+      flex-wrap: wrap;
+    }
   }
 
   .repo-stat {
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    margin: 0 10px 10px 0;
     font-size: 13px;
+
+    &:first-child::before {
+      content: '';
+      padding: 5px;
+      margin-right: 5px;
+      border-radius: 100%;
+      background-color: ${({ color }) => (color ? color : 'gray')};
+    }
 
     &:last-child {
       margin-left: auto;
+
+      @media (max-width: 400px) {
+        flex-wrap: wrap;
+        margin: 0 0 10px 0;
+      }
     }
     svg {
       margin-right: 2px;
@@ -63,9 +86,14 @@ const Container = styled.li`
 `;
 
 export const Repo: React.FC<RepoProps> = ({ repo }) => {
+  const color =
+    (repo.language &&
+      languageColors[repo.language as keyof typeof languageColors].color) ||
+    '';
+
   return (
     <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
-      <Container>
+      <Container color={color}>
         <div className="repo-head">
           <RepoIcon />
           <h3>{repo.name}</h3>

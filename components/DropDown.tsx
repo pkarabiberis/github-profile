@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SyntheticEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import theme from '../styles/theme';
 
@@ -11,8 +11,18 @@ const Container = styled.div`
   text-align: center;
   width: 100%;
 
+  h1 {
+    font-weight: 700;
+    font-size: 32px;
+  }
+
   .dropdown {
     text-align: end;
+
+    @media (max-width: 768px) {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
     select {
       background-color: transparent;
