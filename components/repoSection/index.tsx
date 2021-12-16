@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { RepoData } from '../mock';
-import theme from '../styles/theme';
-import { ChartConfig } from '../types';
-import { languageColors } from '../utils';
-import { DropDown } from './DropDown';
-import { LangChart } from './LangChart';
-import { Repo } from './Repo';
+import { RepoData } from '../../mock';
+import { ChartConfig } from '../../types';
+import { languageColors } from '../../utils';
+import TopLanguagesChart from '../chart/topLanguages';
+import TopStarChart from '../chart/topStars';
+import DropDown from '../dropdown';
+import Repo from '../repo';
+import { ChartContainer, Container, RepoList } from './style';
 
 interface RepoSectionProps {
   repos: RepoData[];
@@ -14,46 +14,9 @@ interface RepoSectionProps {
 
 type sortTypes = 'stargazers_count' | 'forks_count' | 'size';
 
-const Container = styled.section`
-  display: flex;
-  margin: 25px 0;
-  justify-content: space-between;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
-`;
-
-const RepoList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding-left: 10px;
-  max-width: 50%;
-
-  .load-more {
-    margin: 25px auto;
-    text-align: center;
-    font-size: 13px;
-    color: ${theme.colors.grey};
-
-    button {
-      background-color: transparent;
-      color: ${theme.colors.grey};
-
-      &:hover {
-        color: ${theme.colors.blue};
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    min-width: 100%;
-  }
-`;
-
-export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
-  const [chartData, setChartData] = useState<null | ChartConfig>(null);
+const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
+  const [langChartData, setlangChartData] = useState<null | ChartConfig>(null);
+  const [starChartData, setstarChartData] = useState<null | ChartConfig>(null);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
   const [sortType, setSortType] = useState<sortTypes>('stargazers_count');
   const [sortedRepos, setSortedRepos] = useState<RepoData[]>([]);
@@ -100,7 +63,51 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
       ],
     };
 
-    setChartData(config);
+    setlangChartData(config);
+  };
+
+  const buildStarChart = () => {
+    const labels: string[] = [];
+    const labelValues: number[] = [];
+    const backgroundColor = [
+      'rgba(255, 99, 132, 0.7)',
+      'rgba(54, 162, 235, 0.7)',
+      'rgba(255, 206, 86, 0.7)',
+      'rgba(75, 192, 192, 0.7)',
+      'rgba(153, 102, 255, 0.7)',
+      'rgba(255, 159, 64, 0.7)',
+    ];
+    const borderColor = [
+      'rgba(255, 99, 132, 1)',
+      'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)',
+      'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)',
+      'rgba(255, 159, 64, 1)',
+    ];
+
+    const topStarred = [...repos]
+      .sort((a, b) => b['stargazers_count'] - a['stargazers_count'])
+      .slice(0, 5);
+
+    for (const topStar of topStarred) {
+      labels.push(topStar.name);
+      labelValues.push(topStar.stargazers_count);
+    }
+
+    const config = {
+      labels,
+      datasets: [
+        {
+          data: labelValues,
+          backgroundColor,
+          borderColor: borderColor,
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    setstarChartData(config);
   };
 
   const sortMap: Record<string, string> = {
@@ -129,6 +136,8 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
 
   useEffect(() => {
     buildLanguageChart();
+    buildStarChart();
+
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -146,12 +155,17 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
     <>
       {!isMobile && <DropDown sortRepos={handleSortChange} />}
       <Container>
-        {chartData && <LangChart chartData={chartData} />}
+        <ChartContainer>
+          {langChartData && <TopLanguagesChart chartData={langChartData} />}
+          {starChartData && <TopStarChart chartData={starChartData} />}
+        </ChartContainer>
+
         {isMobile && <DropDown sortRepos={handleSortChange} />}
 
         <RepoList>
-          {sortedRepos &&
+          {sortedRepos.length > 0 &&
             sortedRepos.map((repo) => <Repo key={repo.id} repo={repo} />)}
+
           <div className="load-more">
             {repos[cursorIndex + 1] ? (
               <button onClick={handleLoadMore}>Show more</button>
@@ -164,3 +178,5 @@ export const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
     </>
   );
 };
+
+export default RepoSection;

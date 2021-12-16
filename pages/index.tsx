@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { RepoSection } from '../components/RepoSection';
-import { UserInfo } from '../components/UserInfo';
+import RepoSection from '../components/repoSection';
+import UserInfo from '../components/userInfo';
 import { mockRepo, mockUser, RepoData, User } from '../mock';
 
 const Main = styled.main`
