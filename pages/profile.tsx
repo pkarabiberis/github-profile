@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import RepoSection from '../components/repoSection';
 import UserInfo from '../components/userInfo';
-import { mockRepo, mockUser, RepoData, User } from '../mock';
+import { RepoData, User } from '../mock';
 import Head from '../components/Head';
 import Spinner from '../components/spinner';
+
+// dev
+// import { mockRepo, mockUser } from '../mock';
 
 const Main = styled.main`
   padding: 3rem 1.5rem;
