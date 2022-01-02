@@ -5,6 +5,7 @@ import RepoSection from '../components/repoSection';
 import UserInfo from '../components/userInfo';
 import { mockRepo, mockUser, RepoData, User } from '../mock';
 import Head from '../components/Head';
+import Spinner from '../components/spinner';
 
 const Main = styled.main`
   padding: 3rem 1.5rem;
@@ -31,18 +32,21 @@ export default function Profile() {
   const [user, setUser] = useState<null | User>(null);
   const [repos, setRepos] = useState<RepoData[] | null>(null);
   const [error, setError] = useState('');
-  console.log(query);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (query.user) {
+      setLoading(true);
       fetch(`https://api.github.com/users/${query.user}`)
         .then((res) => {
           if (!res.ok) {
+            setLoading(false);
             return setError('Something went wrong.');
           }
           return res.json();
         })
         .catch((err) => {
+          setLoading(false);
           return setError('Something went wrong.');
         })
         .then((json) => setUser(json as User))
@@ -50,13 +54,18 @@ export default function Profile() {
           fetch(`https://api.github.com/users/${query.user}/repos`)
             .then((res) => {
               if (!res.ok) {
+                setLoading(false);
                 return setError('Something went wrong.');
               }
               return res.json();
             })
-            .then((json) => setRepos(json as RepoData[]));
+            .then((json) => {
+              setLoading(false);
+              setRepos(json as RepoData[]);
+            });
         })
         .catch((err) => {
+          setLoading(false);
           return setError('Something went wrong.');
         });
     }
@@ -76,8 +85,14 @@ export default function Profile() {
         </StyledError>
       ) : (
         <Main>
-          {user && <UserInfo user={user} />}
-          {repos && <RepoSection repos={repos} />}
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              {user && <UserInfo user={user} />}
+              {repos && <RepoSection repos={repos} />}
+            </>
+          )}
         </Main>
       )}
     </>
