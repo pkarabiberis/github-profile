@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import theme from '../../styles/theme';
 
 export const Container = styled.section`
   display: flex;
@@ -7,7 +6,7 @@ export const Container = styled.section`
   align-items: center;
 
   h1 {
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 700;
     text-align: center;
   }
@@ -15,11 +14,15 @@ export const Container = styled.section`
   .avatar {
     margin-bottom: 1.5rem;
     border-radius: 100%;
-    width: 150px;
-    height: 150px;
+    width: 9.375rem;
     img {
       border-radius: 100%;
     }
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.33rem;
   }
 
   .commons {
@@ -27,7 +30,7 @@ export const Container = styled.section`
 
     span {
       margin-right: 1.2rem;
-      color: ${theme.colors.grey};
+      color: ${({ theme }) => theme.colors.grey};
       display: flex;
       align-items: center;
 
@@ -35,12 +38,12 @@ export const Container = styled.section`
         margin-right: 0.25rem;
       }
 
-      @media (max-width: 600px) {
+      @media (${({ theme }) => theme.bp.tabletL}) {
         margin: 0 0 0.25rem 0;
       }
     }
 
-    @media (max-width: 600px) {
+    @media (${({ theme }) => theme.bp.tabletL}) {
       flex-direction: column;
       align-items: center;
     }
@@ -49,31 +52,31 @@ export const Container = styled.section`
   .user-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(75px, 150px));
-    gap: 15px;
+    column-gap: 1rem;
 
     .stat-item {
-      margin: 30px 0;
+      margin: 1.875rem 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 1rem;
-      border: 1px solid ${theme.colors.borderColor};
-      border-radius: 0.25em;
+      border: ${({ theme }) => `1px solid ${theme.colors.borderColor}`};
+      border-radius: 0.25rem;
 
       span {
-        font-size: 24px;
+        font-size: 1.5rem;
         font-weight: 700;
-        @media (max-width: 600px) {
-          font-size: 16px;
+        @media (${({ theme }) => theme.bp.tabletS}) {
+          font-size: 1rem;
         }
 
         &:last-child {
           font-weight: 400;
-          margin-top: 5px;
-          color: ${theme.colors.grey};
-          font-size: 16px;
-          @media (max-width: 600px) {
-            font-size: 10px;
+          margin-top: 0.3125rem;
+          color: ${({ theme }) => theme.colors.grey};
+          font-size: 1rem;
+          @media (${({ theme }) => theme.bp.tabletS}) {
+            font-size: 0.625rem;
           }
         }
       }

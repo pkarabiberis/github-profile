@@ -1,36 +1,35 @@
 import styled from 'styled-components';
-import theme from '../../styles/theme';
 
 export const Container = styled.div`
-  margin-top: 25px;
+  margin-top: 1.5rem;
   text-align: center;
   width: 100%;
 
   h1 {
     font-weight: 700;
-    font-size: 32px;
+    font-size: 2rem;
   }
 
   .dropdown {
     text-align: end;
 
-    @media (max-width: 768px) {
+    @media (${({ theme }) => theme.bp.tabletL}) {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
     }
 
     select {
       background-color: transparent;
-      color: ${theme.colors.white};
+      color: ${({ theme }) => theme.colors.white};
     }
 
     option {
       background-color: transparent;
-      color: ${theme.colors.black};
+      color: black;
     }
 
     label {
-      margin-right: 10px;
+      margin-right: 0.6rem;
     }
   }
 `;

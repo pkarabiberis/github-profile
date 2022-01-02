@@ -1,4 +1,5 @@
 // https://github.com/ozh/github-colors
+
 export const languageColors = {
   '1C Enterprise': {
     color: '#814CCC',

@@ -8,6 +8,7 @@ interface UserInfoProps {
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({ user }) => {
+  console.log(user);
   return (
     <Container>
       {user.avatar_url && (

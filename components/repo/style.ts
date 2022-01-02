@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import theme from '../../styles/theme';
 
 interface LangColor {
   color: string;
@@ -12,9 +11,9 @@ export const Container = styled.li<LangColor>`
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  margin-bottom: 20px;
-  font-size: 14px;
-  color: ${theme.colors.white};
+  margin-bottom: 1.25rem;
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.white};
 
   .repo-head {
     display: flex;
@@ -24,27 +23,26 @@ export const Container = styled.li<LangColor>`
     h3 {
       margin: 0;
       font-weight: 700;
-      font-size: 20px;
+      font-size: 1.25rem;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
 
     svg {
-      margin-right: 10px;
+      margin-right: 0.6rem;
     }
   }
 
   p {
-    color: ${theme.colors.grey};
+    color: ${({ theme }) => theme.colors.grey};
   }
 
   .repo-footer {
     display: flex;
     align-items: center;
-    color: ${theme.colors.grey};
-
-    @media (max-width: 400px) {
+    color: ${({ theme }) => theme.colors.grey};
+    @media (${({ theme }) => theme.bp.mobileM}) {
       flex-wrap: wrap;
     }
   }
@@ -52,27 +50,28 @@ export const Container = styled.li<LangColor>`
   .repo-stat {
     display: flex;
     align-items: center;
-    margin: 0 10px 10px 0;
-    font-size: 13px;
+    margin: 0 0.6rem 0.6rem 0;
+    font-size: 0.8rem;
 
     &:first-child::before {
       content: '';
-      padding: 5px;
-      margin-right: 5px;
+      padding: 0.3rem;
+      margin-right: 0.3rem;
       border-radius: 100%;
-      background-color: ${({ color }) => (color ? color : 'gray')};
+      background-color: ${({ color, theme }) =>
+        color ? color : theme.colors.grey};
     }
 
     &:last-child {
       margin-left: auto;
 
-      @media (max-width: 400px) {
+      @media (${({ theme }) => theme.bp.mobileM}) {
         flex-wrap: wrap;
-        margin: 0 0 10px 0;
+        margin: 0 0 0.6rem 0;
       }
     }
     svg {
-      margin-right: 2px;
+      margin-right: 0.2rem;
     }
   }
 `;

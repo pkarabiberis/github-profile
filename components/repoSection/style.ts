@@ -1,12 +1,11 @@
 import styled from 'styled-components';
-import theme from '../../styles/theme';
 
 export const Container = styled.section`
   display: flex;
-  margin: 25px 0;
+  margin: 1.5rem 0;
   justify-content: space-between;
 
-  @media (max-width: 768px) {
+  @media (${({ theme }) => theme.bp.tabletL}) {
     flex-direction: column;
   }
 `;
@@ -16,7 +15,7 @@ export const ChartContainer = styled.div`
   flex: 1;
   max-width: 50%;
 
-  @media (max-width: 768px) {
+  @media (${({ theme }) => theme.bp.tabletL}) {
     min-width: 100%;
   }
 `;
@@ -25,26 +24,25 @@ export const RepoList = styled.ul`
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding-left: 10px;
+  padding-left: 0.6rem;
   max-width: 50%;
 
   .load-more {
-    margin: 25px auto;
+    margin: 1.2rem auto;
     text-align: center;
-    font-size: 13px;
-    color: ${theme.colors.grey};
+    color: ${({ theme }) => theme.colors.grey};
 
     button {
       background-color: transparent;
-      color: ${theme.colors.grey};
-
+      color: ${({ theme }) => theme.colors.grey};
+      font-size: 0.8rem;
       &:hover {
-        color: ${theme.colors.blue};
+        color: ${({ theme }) => theme.colors.blue};
       }
     }
   }
 
-  @media (max-width: 768px) {
+  @media (${({ theme }) => theme.bp.tabletL}) {
     min-width: 100%;
   }
 `;

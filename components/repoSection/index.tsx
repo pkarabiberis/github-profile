@@ -123,7 +123,6 @@ const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
 
   const sortRepos = () => {
     const sorted = [...repos]
-      .filter((repo) => !repo.fork)
       .sort((a, b) => b[sortType] - a[sortType])
       .slice(0, cursorIndex);
 
@@ -163,7 +162,7 @@ const RepoSection: React.FC<RepoSectionProps> = ({ repos }) => {
         {isMobile && <DropDown sortRepos={handleSortChange} />}
 
         <RepoList>
-          {sortedRepos.length > 0 &&
+          {sortedRepos.length &&
             sortedRepos.map((repo) => <Repo key={repo.id} repo={repo} />)}
 
           <div className="load-more">
