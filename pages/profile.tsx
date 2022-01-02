@@ -49,6 +49,7 @@ export default function Profile() {
           return res.json();
         })
         .catch((err) => {
+          console.error('error: ', err);
           setLoading(false);
           return setError('Something went wrong.');
         })
@@ -69,6 +70,7 @@ export default function Profile() {
         })
         .catch((err) => {
           setLoading(false);
+          console.error('error: ', err);
           return setError('Something went wrong.');
         });
     }
